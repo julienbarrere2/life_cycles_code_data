@@ -1,0 +1,70 @@
+﻿tube_name,strain_name,mating_type,strain_num
+Tube_001,273614N,diploid,SGRP-1
+Tube_002,273614N,haploid_mat_a,SGRP-2
+Tube_003,273614N,haploid_mat_alpha,SGRP-3
+Tube_004,BC187,diploid,SGRP-4
+Tube_005,BC187,haploid_mat_a,SGRP-5
+Tube_006,BC187,haploid_mat_alpha,SGRP-6
+Tube_007,DBVPG 1106,diploid,SGRP-7
+Tube_008,DBVPG 1106,haploid_mat_a,SGRP-8
+Tube_009,DBVPG 1106,haploid_mat_alpha,SGRP-9
+Tube_010,DBVPG 1373,diploid,SGRP-10
+Tube_011,DBVPG 1373,haploid_mat_a,SGRP-11
+Tube_012,DBVPG 1373,haploid_mat_alpha,SGRP-12
+Tube_013,DBVPG 6044,diploid,SGRP-13
+Tube_014,DBVPG 6044,haploid_mat_a,SGRP-14
+Tube_015,DBVPG 6044,haploid_mat_alpha,SGRP-15
+Tube_016,322134S,diploid,SGRP-16
+Tube_017,322134S,haploid_mat_a,SGRP-17
+Tube_018,322134S,haploid_mat_alpha,SGRP-18
+Tube_019,L_1374,diploid,SGRP-19
+Tube_020,L_1374,haploid_mat_a,SGRP-20
+Tube_021,L_1374,haploid_mat_alpha,SGRP-21
+Tube_022,L_1528,diploid,SGRP-22
+Tube_023,L_1528,haploid_mat_a,SGRP-23
+Tube_024,L_1528,haploid_mat_alpha,SGRP-24
+Tube_025,NCYC 110,diploid,SGRP-25
+Tube_026,NCYC 110,haploid_mat_a,SGRP-26
+Tube_027,NCYC 110,haploid_mat_alpha,SGRP-27
+Tube_028,SK1,diploid,SGRP-28
+Tube_029,SK1,haploid_mat_a,SGRP-29
+Tube_030,SK1,haploid_mat_alpha,SGRP-30
+Tube_031,378604X,diploid,SGRP-31
+Tube_032,378604X,haploid_mat_a,SGRP-32
+Tube_033,378604X,haploid_mat_alpha,SGRP-33
+Tube_034,UWOPS05-217.3,diploid,SGRP-34
+Tube_035,UWOPS05-217.3,haploid_mat_a,SGRP-35
+Tube_036,UWOPS05-217.3,haploid_mat_alpha,SGRP-36
+Tube_037,S288c,diploid,SGRP-37
+Tube_038,S288c,haploid_mat_a,SGRP-38
+Tube_039,S288c,haploid_mat_alpha,SGRP-39
+Tube_040,UWOPS83-787.3,diploid,SGRP-40
+Tube_041,UWOPS83-787.3,haploid_mat_a,SGRP-41
+Tube_042,UWOPS83-787.3,haploid_mat_alpha,SGRP-42
+Tube_043,UWOPS87-2421,diploid,SGRP-43
+Tube_044,UWOPS87-2421,haploid_mat_a,SGRP-44
+Tube_045,UWOPS87-2421,haploid_mat_alpha,SGRP-45
+Tube_046,Y12,diploid,SGRP-46
+Tube_047,Y12,haploid_mat_a,SGRP-47
+Tube_048,Y12,haploid_mat_alpha,SGRP-48
+Tube_049,Y55,diploid,SGRP-49
+Tube_050,Y55,haploid_mat_a,SGRP-50
+Tube_051,Y55,haploid_mat_alpha,SGRP-51
+Tube_052,YIIc17_E5,diploid,SGRP-52
+Tube_053,YIIc17_E5,haploid_mat_a,SGRP-53
+Tube_054,YIIc17_E5,haploid_mat_alpha,SGRP-54
+Tube_055,YJM975,diploid,SGRP-55
+Tube_056,YJM975,haploid_mat_a,SGRP-56
+Tube_057,YJM975,haploid_mat_alpha,SGRP-57
+Tube_058,YJM978,diploid,SGRP-58
+Tube_059,YJM978,haploid_mat_a,SGRP-59
+Tube_060,YJM978,haploid_mat_alpha,SGRP-60
+Tube_061,YJM981,diploid,SGRP-61
+Tube_062,YJM981,haploid_mat_a,SGRP-62
+Tube_063,YJM981,haploid_mat_alpha,SGRP-63
+Tube_064,YPS128,diploid,SGRP-64
+Tube_065,YPS128,haploid_mat_a,SGRP-65
+Tube_066,YPS128,haploid_mat_alpha,SGRP-66
+Tube_067,YPS606,diploid,SGRP-67
+Tube_068,YPS606,haploid_mat_a,SGRP-68
+Tube_069,YPS606,haploid_mat_alpha,SGRP-69
