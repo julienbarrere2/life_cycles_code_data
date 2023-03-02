@@ -1,0 +1,301 @@
+---
+title: "eJB234_plots"
+author: "Julien Barrere"
+date: "09/10/2021"
+output: pdf_document
+---
+
+
+````{r globalOptions, include=FALSE}
+knitr::opts_chunk$set(fig.width=11.5, fig.height=5.2, fig.path='Figures/',dev = "pdf",echo=FALSE, warning=FALSE, message=FALSE)
+```
+
+```{r clear_env}
+rm(list = ls())
+```
+
+```{r import_libraries, message=FALSE, warning=FALSE, paged.print=FALSE}
+ library(ggplot2)
+ library(readxl)
+ library(tidyverse)
+```
+
+```{r importData}
+
+# change according to working fofder
+my_path = "~/Library/CloudStorage/GoogleDrive-julienbarrere2@gmail.com/My Drive/MCO/1-murray-lab/13-writing/paper_drafts/draft_031722/publication_final_documents/data/eJB234/"
+
+setwd(my_path)
+
+
+# import data and conditions:
+my_data = read.csv(paste(my_path,"eJB234_data.csv", sep=""))
+conditions = read.csv(paste(my_path,"eJB234_conditions.csv", sep=""))
+ 
+ 
+my_strains = tibble(strain=c("yJB128", "yJB138", "yJB130", "yJB064", "yJB077", "yJB176", "yJB212", "yJB168", "yJB215","yJB148", "yJB069"),
+                    marker = c("mCerulean", "mCitrine", "mCherry","mCerulean", "mCherry", "mCherry", "mCitrine", "mCherry", "mCerulean", "mCitrine", "mCitrine"))
+
+
+my_strains = as.data.frame(my_strains)
+
+
+#my_data <- subset(my_data, time %in% c(1,2,3))
+#write_csv(my_data,"data.csv" )
+
+#my_fsc_data <- read.csv(paste(my_path,"FSC_raw_data.csv", sep=""))
+
+```
+
+
+```{r plot_FSC}
+
+# create labels:
+strainLabs <- c("John ACE2∆ vs. SC", "John RM11 vs. SC", "RM11 - Ind. vs. SC", "RM11 - Ind. vs. C", "RM11 - C vs. SC", "ACE2 - Ind. vs. SC", "ACE2 - Ind. vs. C", "ACE2 - C vs. SC")
+names(strainLabs) <- c("yJB064_yJB077", "yJB069_yJB077","yJB168_yJB215", "yJB168_yJB148", "yJB148_yJB215", "yJB130_yJB128", "yJB130_yJB138", "yJB138_yJB128")
+
+
+### here I just want to make sure that the size remains constant over time, and I use FSC as a proxy. ###
+
+p = ggplot(data = subset(my_data, my_data$carbon_source == "glucose_fructose"), aes(x=sugar_concentration,y=mean_FSC_A, color=Population, group=interaction(tube_name, sugar_concentration,Population)))+
+  geom_point(aes(color=interaction(Population, tube_name)),size=4)+
+  xlab("Transfer")+
+  ylab("Mean FSC-A")+
+  ggtitle("Mean FSC - Glucose Fructose - 5 and 10 mM")+
+  scale_x_continuous(trans=scales::pseudo_log_trans(base = 2))+
+  theme_classic() +
+  theme( 
+   legend.position="none",
+  )
+p + facet_grid(cols=vars(strains), rows = vars(media),labeller =  labeller(strains=strainLabs))
+
+
+
+p = ggplot(data = subset(my_data, my_data$carbon_source == "sucrose"), aes(x=time,y=mean_FSC_A, color=interaction(Population,  transfer, tube_name), group=interaction(Population, tube_name)))+
+  geom_point(aes(color=interaction(Population, tube_name)),size=4)+
+  geom_line(aes(color=interaction(Population, tube_name)))+
+  xlab("Transfer")+
+  ylab("Mean FSC-A")+
+  ggtitle("Mean FSC - Sucrose - 5 and 10 mM")+
+  scale_x_continuous(trans=scales::pseudo_log_trans(base = 2))+
+  theme_classic() +
+  theme( 
+   legend.position="none",
+  )
+p + facet_grid(cols=vars(strains), rows = vars(media),labeller =  labeller(strains=strainLabs))
+```
+
+
+
+
+```{r frequency_over_time}
+
+# looking at the frequencies over time:
+
+p = ggplot(data = subset(my_data, my_data$carbon_source == "glucose_fructose"), aes(x=generation,y=Frequency, color=Population, group=interaction(Population, tube_name)))+
+  geom_line(aes(color=Population), size=1)+
+  geom_point(aes(color=Population),size=4)+
+  scale_color_manual(values = c("#00AFBB","#FC4E07", "#E7B800"))+
+  xlab("Time (generations)")+
+  ylim(0,100)+
+  ggtitle("Frequency - Glucose Fructose")+
+  theme_classic() +
+  theme( 
+   legend.position="none",
+  )
+p + facet_grid(cols=vars(strains), rows = vars(innoc_rep),labeller =  labeller(strains=strainLabs))
+
+
+p = ggplot(data = subset(my_data, my_data$carbon_source == "sucrose"), aes(x=generation,y=Frequency, color=Population, group=interaction(Population, tube_name)))+
+  geom_line(aes(color=Population), size=1)+
+  geom_point(aes(color=Population),size=4)+
+  scale_color_manual(values = c("#00AFBB","#FC4E07", "#E7B800"))+
+  xlab("Time (generations)")+
+  ylim(0,100)+
+  ggtitle("Frequency - Glucose Fructose")+
+  theme_classic() +
+  theme( 
+   legend.position="none",
+  )
+p + facet_grid(cols=vars(strains), rows = vars(innoc_rep),labeller =  labeller(strains=strainLabs))
+
+```
+
+
+
+
+```{r get_ratio}
+# create the ratio table
+
+my_ratio = conditions[rep(row.names(conditions),length(unique(my_data$time))),]
+my_ratio <- as.data.frame(my_ratio)
+my_ratio$time = rep(unique(my_data$time), each=nrow(conditions))
+my_ratio$ratio = NA 
+
+for (i in 1:nrow(my_ratio)){
+  count_strains <- my_data[my_data$tube_name == my_ratio$tube_name[i],]
+  count_strains <- count_strains[count_strains$time == my_ratio$time[i],]
+  count_strain_1 <- count_strains[count_strains$Population == my_strains$marker[my_strains$strain == my_ratio$strain_1[i]],"count"][1]
+  count_strain_2 <- count_strains[count_strains$Population == my_strains$marker[my_strains$strain == my_ratio$strain_2[i]],"count"][1]
+  my_ratio$ratio[i] <- count_strain_1/count_strain_2
+}
+
+my_ratio$generation <- round(log2(as.numeric(my_ratio$dilution)) * as.numeric(my_ratio$time))
+my_ratio$strains = paste(my_ratio$strain_1,my_ratio$strain_2,sep="_")
+```
+
+```{r plot_ratio}
+
+p = ggplot(data = my_ratio, aes(x=generation,y=as.numeric(ratio), group=interaction(replicate, tube_name)))+
+  geom_line( size=1, aes(color=as.factor(interaction(sugar_concentration))))+
+  geom_point(size=4, aes(color=as.factor(interaction(sugar_concentration))))+
+  xlab("Time (generations)")+
+  ylab("Ratio Strain1/Strain2")+
+  scale_y_continuous(trans='log10')+
+  theme_classic() +
+  theme( 
+   legend.position="none",
+  )
+p + facet_grid(cols=vars(strains), rows = vars(carbon_source), labeller = labeller(strains=strainLabs))
+
+```
+
+
+```{r get_slope}
+
+# calculate slope of ratio to get fitness value
+
+my_slopes <- conditions
+my_slopes$slope <- NA
+my_slopes$strains <- paste(my_slopes$strain_1,my_slopes$strain_2,sep="_")
+
+for (tube in unique(my_ratio$tube_name)){
+  my_temp_data = subset(my_ratio, tube_name == tube)
+  my_temp_fit = lm((log(as.numeric(my_temp_data$ratio))) ~ my_temp_data$generation)
+  my_slopes$slope[my_slopes$tube_name == tube] = my_temp_fit$coefficients[2]
+}
+ 
+
+## get averages
+
+my_slopes_summary = aggregate(my_slopes$slope, by=list( my_slopes$media, my_slopes$sugar_concentration, my_slopes$dilution, my_slopes$strains, my_slopes$carbon_source, my_slopes$estradiol_concentration), FUN=mean)
+
+names(my_slopes_summary) <- c("media","sugar_concentration","dilution","strains","carbon_source","estradiol_concentration", "mean")
+
+my_slopes_summary$sd <- aggregate(my_slopes$slope, by=list( my_slopes$media, my_slopes$sugar_concentration, my_slopes$dilution, my_slopes$strains, my_slopes$carbon_source, my_slopes$estradiol_concentration), FUN=sd)$x
+my_slopes_summary$se <- my_slopes_summary$sd/(sqrt(length(unique(my_data$replicate))*2))
+
+```
+
+```{r slopes, fig.width=10, fig.height=5}
+
+p = ggplot(data = my_slopes, aes(x=sugar_concentration,y=100*slope, group=interaction(replicate, tube_name)))+
+  geom_point(aes(color=as.factor(interaction(carbon_source))),size=4)+
+  geom_hline(yintercept=0, linetype="dashed", color = "red")+
+  ylab("Relative fitness (%)")+
+  ggtitle("Fitness")+
+  theme_classic() +
+  theme( 
+   legend.position="none",
+  )
+p + facet_grid(cols=vars(strains), rows = vars(media), labeller = labeller(strains=strainLabs))
+
+
+##### summary plots ######
+
+
+p = ggplot(data = my_slopes_summary, aes(x=carbon_source,y=100*mean))+
+  geom_errorbar(aes(ymin=100*mean-100*se, ymax=100*mean+100*se, color=as.factor(carbon_source)), width=0, size=1)+
+  geom_point(aes(color=as.factor(carbon_source)),size=4)+
+  geom_hline(yintercept=0, linetype="dashed", color = "red")+
+  ylab("Relative fitness (%)")+
+  ggtitle("Fitness")+
+  theme_classic() +
+  theme( 
+   legend.position="none",
+  )
+p + facet_grid(cols=vars(strains), labeller = labeller(strains=strainLabs))
+
+p = ggplot(data = my_slopes_summary, aes(x=sugar_concentration,y=100*mean))+
+  geom_errorbar(aes(ymin=100*mean-100*se, ymax=100*mean+100*se,color=as.factor(interaction(carbon_source))), width=0, size=1)+
+  geom_point(aes(color=as.factor(interaction(carbon_source))),size=4)+
+  geom_hline(yintercept=0, linetype="dashed", color = "red")+
+  ylab("Relative fitness (%)")+
+  ggtitle("Fitness")+
+  theme_classic() +
+  theme( 
+   legend.position="none",
+  )
+p + facet_grid(cols=vars(strains),rows = vars(media), labeller = labeller(strains=strainLabs))
+
+
+```
+
+
+
+```{r paper_figures}
+
+p1 = ggplot(data = my_slopes_summary[my_slopes_summary$strains =="yJB064_yJB077",], aes(x=sugar_concentration,y=100*mean))+
+  geom_errorbar(aes(ymin=100*mean-100*se, ymax=100*mean+100*se,color=as.factor(interaction(carbon_source))), width=0, size=1)+
+  geom_point(aes(color=as.factor(interaction(carbon_source))),size=8)+
+  geom_hline(yintercept=0, linetype="dashed", color = "red")+
+  ylab("")+
+  xlab("")+
+  ylim(-2,18)+
+  theme_classic() +
+  theme( 
+    legend.position="none",
+    axis.text.x = element_blank(),
+    axis.text.y = element_blank()
+  )
+p1
+
+
+#ggsave(plot = p1, filename = "comp_exp_concentration_naked.pdf", width = 5, height = 5, device="pdf", path = "Figures/")
+
+p1 = ggplot(data = my_slopes_summary[my_slopes_summary$strains =="yJB064_yJB077",], aes(x=sugar_concentration,y=100*mean))+
+  geom_errorbar(aes(ymin=100*mean-100*se, ymax=100*mean+100*se,color=as.factor(interaction(carbon_source))), width=0, size=1)+
+  geom_point(aes(color=as.factor(interaction(carbon_source))),size=8)+
+  geom_hline(yintercept=0, linetype="dashed", color = "red")+
+  ylab("")+
+  xlab("")+
+  ylim(-2,18)+
+  theme_classic() +
+  theme( 
+  )
+p1
+
+#ggsave(plot = p1, filename = "comp_exp_concentration.pdf", width = 5, height = 5, device="pdf", path = "Figures/")
+
+p1 = ggplot(data = my_slopes[my_slopes$strains == "yJB064_yJB077",], aes(x=sugar_concentration,y=100*slope, group=interaction(replicate, tube_name)))+
+  geom_point(aes(color=as.factor(interaction(carbon_source))),size=8)+
+  geom_hline(yintercept=0, linetype="dashed", color = "red")+
+  ylab("")+
+  xlab("")+
+  ylim(-2,18)+
+  theme_classic() +
+  theme( 
+    legend.position="none",
+    axis.text.x = element_blank(),
+    axis.text.y = element_blank()
+  )
+p1
+
+#ggsave(plot = p1, filename = "comp_exp_concentration_rep_naked.pdf", width = 5, height = 5, device="pdf", path = "Figures/")
+
+p1 = ggplot(data = my_slopes[my_slopes$strains == "yJB064_yJB077",], aes(x=sugar_concentration,y=100*slope, group=interaction(replicate, tube_name)))+
+  geom_point(aes(color=as.factor(interaction(carbon_source))),size=8)+
+  geom_hline(yintercept=0, linetype="dashed", color = "red")+
+  ylab("")+
+  xlab("")+
+  ylim(-2,18)+
+  theme_classic() +
+  theme( 
+  )
+p1
+
+#ggsave(plot = p1, filename = "comp_exp_concentration_rep.pdf", width = 5, height = 5, device="pdf", path = "Figures/")
+```
+
+
+
